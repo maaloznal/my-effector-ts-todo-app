@@ -1,50 +1,113 @@
-# React + TypeScript + Vite
+# ToDo App с использованием Effector, React и TypeScript
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Для запуска приложения выполните команду:
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Обзор
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Это приложение для управления задачами (To-Do List) разработано с использованием **React**, **Effector** и **TypeScript**. Оно предоставляет удобный интерфейс для добавления, удаления, завершения и фильтрации задач. Effector используется для управления состоянием приложения, что делает его предсказуемым и легко масштабируемым, а TypeScript обеспечивает статическую типизацию, улучшая читаемость кода и предотвращая ошибки на этапе разработки.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+---
+
+## Основные функции
+
+### 1. **Добавление задачи**
+
+- Пользователь может ввести текст задачи в поле ввода и нажать кнопку "Добавить задачу".
+- Задача добавляется в список с уникальным `id`, текстом и статусом `completed: false`.
+- Добавление задачи происходит с задержкой в 1 секунду (имитация асинхронного запроса).
+
+### 2. **Удаление задачи**
+
+- Пользователь может удалить задачу, нажав кнопку "Удалить".
+- Удаленная задача помечается как `deleted: true` и скрывается из основного списка, но остается доступной при фильтрации по удаленным задачам.
+
+### 3. **Завершение задачи**
+
+- Пользователь может отметить задачу как завершенную, нажав кнопку "Завершить".
+- Если задача уже завершена, кнопка меняется на "Отменить", и пользователь может снять отметку о завершении.
+
+### 4. **Фильтрация задач**
+
+- Пользователь может фильтровать задачи по трем статусам:
+  - **Все задачи**: отображаются все задачи, кроме удаленных.
+  - **Завершенные**: отображаются только завершенные задачи.
+  - **Удаленные**: отображаются только удаленные задачи.
+
+### 5. **Асинхронные операции**
+
+- Добавление задачи происходит с задержкой в 1 секунду, что имитирует асинхронный запрос к серверу.
+
+---
+
+## Использование TypeScript
+
+Приложение полностью типизировано с использованием **TypeScript**, что обеспечивает следующие преимущества:
+
+1. **Статическая типизация**:
+
+   - TypeScript помогает выявлять ошибки на этапе разработки, что повышает надежность кода.
+   - Типизация данных (например, интерфейс `Item` для задач) делает код более понятным и предсказуемым.
+
+2. **Улучшенная читаемость**:
+
+   - Типы и интерфейсы делают код самодокументируемым, что упрощает его поддержку и расширение.
+
+3. **Безопасность**:
+   - TypeScript предотвращает ошибки, связанные с неправильным использованием типов данных, например, передачу неверных значений в события или store.
+
+---
+
+## Структура кода
+
+### 1. **Effector Store**
+
+- `$itemStore`: Хранит список всех задач.
+- `$filterStatus`: Хранит текущий статус фильтрации ("all", "completed", "deleted").
+- `$filteredItemStore`: Комбинированный store, который возвращает отфильтрованный список задач в зависимости от выбранного статуса.
+
+### 2. **Effector Events**
+
+- `addItem`: Добавляет новую задачу в список.
+- `deleteItem`: Помечает задачу как удаленную.
+- `toggleCompleted`: Переключает статус завершения задачи.
+- `changeFilterStatus`: Изменяет статус фильтрации.
+
+### 3. **Effector Effects**
+
+- `addTaskWithDelayFx`: Эффект, который имитирует асинхронное добавление задачи с задержкой в 1 секунду.
+
+### 4. **React Component**
+
+- `TodoApp`: Основной компонент, который отображает интерфейс приложения.
+- Использует хуки `useUnit` для подключения к Effector store и событиям.
+- Состояние текста новой задачи управляется с помощью `useState`.
+
+---
+
+## Преимущества архитектуры
+
+1. **Масштабируемость**:
+
+   - Effector позволяет легко добавлять новые функции и управлять состоянием приложения.
+   - Использование `combine` для фильтрации задач делает код гибким и легко расширяемым.
+
+2. **Асинхронные операции**:
+
+   - Effector предоставляет удобный способ работы с асинхронными операциями через эффекты (`createEffect`).
+
+3. **Типизация**:
+
+   - TypeScript обеспечивает статическую типизацию, что помогает выявлять ошибки на этапе разработки и улучшает читаемость кода.
+
+4. **Модульность**:
+   - Логика управления состоянием вынесена в отдельные store и события, что делает код более структурированным и удобным для тестирования.
+
+---
+
+## Заключение
+
+Это приложение демонстрирует эффективное использование **Effector**, **React** и **TypeScript** для управления состоянием в To-Do List. Effector обеспечивает предсказуемость и масштабируемость, React предоставляет удобный интерфейс для взаимодействия с пользователем, а TypeScript добавляет статическую типизацию, улучшая качество кода. Приложение поддерживает добавление, удаление, завершение и фильтрацию задач, что делает его полезным инструментом для организации задач.
